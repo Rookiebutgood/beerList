@@ -1,12 +1,11 @@
 <template>
 <div class="beer-list">
-  <p>BeerList</p>
   <beer-item v-for="(beer, index) in beerList" :key="index" 
              :number="index" 
              :beerInfo="beer" 
              @edit="editItem" 
              @delete="deleteItem" />
-  <button v-if="showLoadMore" @click="showMore">{{loading ? 'Loading' : 'ShowNext'}}</button>
+  <button class="beer-list__btn" v-if="showLoadMore" @click="showMore">{{isLoading ? 'Loading' : 'ShowNext'}}</button>
   <edit-form v-if="showEditForm" :info="editInfo" @save="saveItem" />
 </div>
 </template>
@@ -22,11 +21,11 @@ export default {
   data: function() {
     return {
       currentPage: 1,
-      loading: false,
+      isLoading: false,
       showLoadMore: false,
+      showEditForm: false,
       beerList: [],
       editInfo: {},
-      showEditForm: false
     }
   },
   created: function() {
@@ -40,7 +39,7 @@ export default {
   methods: {
     showMore() {
       this.currentPage++;
-      this.loading = true;
+      this.isLoading = true;
       axios.get(`https://api.punkapi.com/v2/beers?page=${this.currentPage}&per_page=25`)
         .then(response => {
           if(response.data.length > 0) {
@@ -50,7 +49,7 @@ export default {
           }
         })
         .catch(error => console.log(error))
-        .finally(() => this.loading = false)
+        .finally(() => this.isLoading = false)
     },
     editItem(info) {
       this.showEditForm = true;
@@ -79,5 +78,19 @@ export default {
     width: 100%;
     padding: 0 20%;
     box-sizing: border-box;
+    position: relative;
+    &__btn {
+      border: 1px solid black;
+      background: none;
+      outline: none;
+      border-radius: 5px;
+      padding: 5px;
+      cursor: pointer;
+      margin: 0 10px;
+      &:hover {
+        border: none;
+        box-shadow: 1px 1px 10px 1px rgba(0, 0, 0, 0.5);
+      }
+    }
   }
 </style>
