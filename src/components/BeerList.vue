@@ -5,7 +5,17 @@
              :beerInfo="beer" 
              @edit="editItem" 
              @delete="deleteItem" />
-  <button class="beer-list__btn" v-if="showLoadMore" @click="showMore">{{isLoading ? 'Loading' : 'ShowNext'}}</button>
+  <div>
+    <button class="beer-list__btn" v-if="showLoadMore" @click="showMore">{{isLoading ? 'Loading' : 'Show next'}}</button>
+    <label>Количество записей</label>
+    <select class="beer-list__select" v-model="perPage">
+      <option value="1">1</option>
+      <option value="5">5</option>
+      <option value="10">10</option>
+      <option value="25">25</option>
+      <option value="50">50</option>
+    </select>
+  </div>
   <edit-form v-if="showEditForm" :info="editInfo" @save="saveItem" />
 </div>
 </template>
@@ -26,10 +36,11 @@ export default {
       showEditForm: false,
       beerList: [],
       editInfo: {},
+      perPage: 10
     }
   },
   created: function() {
-    axios.get('https://api.punkapi.com/v2/beers?page=1&per_page=1')
+    axios.get('https://api.punkapi.com/v2/beers?page=1&per_page=10')
         .then(response => {
           this.beerList = response.data;
         })
@@ -37,10 +48,11 @@ export default {
         .finally(() => this.showLoadMore = true)
   },
   methods: {
+    //Метод для получения новых записей из api. Если api возвращает пустой массив, скрывает кнопку Show next
     showMore() {
       this.currentPage++;
       this.isLoading = true;
-      axios.get(`https://api.punkapi.com/v2/beers?page=${this.currentPage}&per_page=25`)
+      axios.get(`https://api.punkapi.com/v2/beers?page=${this.currentPage}&per_page=${this.perPage}`)
         .then(response => {
           if(response.data.length > 0) {
             this.beerList = this.beerList.concat(response.data)
@@ -51,10 +63,12 @@ export default {
         .catch(error => console.log(error))
         .finally(() => this.isLoading = false)
     },
+    //Метод для передачи данных из BeerItem в EditForm
     editItem(info) {
       this.showEditForm = true;
       this.editInfo = info;
     },
+    //Метод для сохранения изменений, сделанных в EditForm
     saveItem(info) {
       if(info.id) {
           this.beerList.map(el => {
@@ -66,6 +80,7 @@ export default {
       }
       this.showEditForm = false;
     },
+    //Метод для удаления записи
     deleteItem(id) {
       this.beerList = this.beerList.filter(el => {return el.id != id});
     }
@@ -79,6 +94,9 @@ export default {
     padding: 0 20%;
     box-sizing: border-box;
     position: relative;
+    &__select {
+      margin-left: 10px;
+    }
     &__btn {
       border: 1px solid black;
       background: none;
