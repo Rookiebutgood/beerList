@@ -20,6 +20,10 @@ export default {
 <style lang="scss">
   .beer-item {
     display: flex;
+    border-radius: 10px;
+    box-shadow: 1px 1px 10px 1px rgba(0, 0, 0, 0.7);
+    padding: 10px;
+    margin-bottom: 20px;
     &__img {
       width: 10%;
       height: auto;
