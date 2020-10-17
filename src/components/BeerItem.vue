@@ -7,7 +7,7 @@
       <p class="beer-item__description">{{beerInfo.description}}</p>
       <blockquote class="beer-item__tips">{{beerInfo.brewers_tips}}</blockquote>
       <button @click="edit(beerInfo)">Edit</button>
-      <button>Delete</button>
+      <button @click="$emit('delete', beerInfo.id)">Delete</button>
     </div>
   </div>
 </template>

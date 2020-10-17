@@ -1,7 +1,7 @@
 <template>
 <div class="beer-list">
   <p>BeerList</p>
-  <beer-item v-for="(beer, index) in beerList" :key="index" :number="index" :beerInfo="beer" @edit="editInfo = $event" />
+  <beer-item v-for="(beer, index) in beerList" :key="index" :number="index" :beerInfo="beer" @edit="editInfo = $event" @delete="deleteItem" />
   <button v-if="showLoadMore" @click="showMore">{{loading ? 'Loading' : 'ShowNext'}}</button>
   <edit-form v-if="editInfo.name" :info="editInfo" @/>
 </div>
@@ -47,6 +47,9 @@ export default {
         })
         .catch(error => console.log(error))
         .finally(() => this.loading = false)
+    },
+    deleteItem(id) {
+      this.beerList = this.beerList.filter(el=>{return el.id != id});
     },
     edit(e) {
       console.log(e)
