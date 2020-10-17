@@ -6,7 +6,7 @@
       <h2 class="beer-item__title">{{beerInfo.name}}</h2>
       <p class="beer-item__description">{{beerInfo.description}}</p>
       <blockquote class="beer-item__tips">{{beerInfo.brewers_tips}}</blockquote>
-      <button @click="edit(beerInfo)">Edit</button>
+      <button @click="$emit('edit', beerInfo)">Edit</button>
       <button @click="$emit('delete', beerInfo.id)">Delete</button>
     </div>
   </div>
@@ -15,12 +15,7 @@
 <script>
 export default {
   name: 'BeerItem',
-  props: ['beerInfo', 'number'],
-  methods: {
-    edit: function(info) {
-      this.$emit('edit', info)
-    }
-  }
+  props: ['beerInfo', 'number']
 }
 </script>
 

@@ -1,9 +1,13 @@
 <template>
 <div class="beer-list">
   <p>BeerList</p>
-  <beer-item v-for="(beer, index) in beerList" :key="index" :number="index" :beerInfo="beer" @edit="editInfo = $event" @delete="deleteItem" />
+  <beer-item v-for="(beer, index) in beerList" :key="index" 
+             :number="index" 
+             :beerInfo="beer" 
+             @edit="editItem" 
+             @delete="deleteItem" />
   <button v-if="showLoadMore" @click="showMore">{{loading ? 'Loading' : 'ShowNext'}}</button>
-  <edit-form v-if="editInfo.name" :info="editInfo" @/>
+  <edit-form v-if="showEditForm" :info="editInfo" @save="saveItem" />
 </div>
 </template>
 
@@ -21,11 +25,11 @@ export default {
       loading: false,
       showLoadMore: false,
       beerList: [],
-      editInfo: {}
+      editInfo: {},
+      showEditForm: false
     }
   },
   created: function() {
-    window.localStorage.setItem('beer', JSON.stringify([]));
     axios.get('https://api.punkapi.com/v2/beers?page=1&per_page=1')
         .then(response => {
           this.beerList = response.data;
@@ -48,11 +52,23 @@ export default {
         .catch(error => console.log(error))
         .finally(() => this.loading = false)
     },
-    deleteItem(id) {
-      this.beerList = this.beerList.filter(el=>{return el.id != id});
+    editItem(info) {
+      this.showEditForm = true;
+      this.editInfo = info;
     },
-    edit(e) {
-      console.log(e)
+    saveItem(info) {
+      if(info.id) {
+          this.beerList.map(el => {
+          if(info.id === el.id) {
+            el.name = info.name;
+            el.description = info.description;
+          }
+        });
+      }
+      this.showEditForm = false;
+    },
+    deleteItem(id) {
+      this.beerList = this.beerList.filter(el => {return el.id != id});
     }
   }
 }
